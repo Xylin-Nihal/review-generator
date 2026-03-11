@@ -63,7 +63,9 @@ navigator.clipboard.writeText(text)
 
 setCopied(true)
 
+setTimeout(()=>{
 window.location.href = GOOGLE_REVIEW_LINK
+},500)
 
 }
 
