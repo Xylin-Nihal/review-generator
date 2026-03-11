@@ -63,9 +63,7 @@ navigator.clipboard.writeText(text)
 
 setCopied(true)
 
-setTimeout(()=>{
-window.open(GOOGLE_REVIEW_LINK,"_blank")
-},1200)
+window.location.href = GOOGLE_REVIEW_LINK
 
 }
 
@@ -156,9 +154,16 @@ Generating AI reviews...
 
 <div
 key={index}
-className="border rounded-xl p-4 mb-3 hover:bg-blue-50 cursor-pointer transition"
+className={`border rounded-xl p-4 mb-3 cursor-pointer transition
+${index===0 ? "border-blue-500 bg-blue-50" : "hover:bg-gray-50"}`}
 onClick={()=>copyReview(review)}
 >
+
+{index===0 && (
+<p className="text-xs text-blue-600 font-semibold mb-1">
+⭐ Recommended review
+</p>
+)}
 
 <p className="text-gray-800">{review}</p>
 

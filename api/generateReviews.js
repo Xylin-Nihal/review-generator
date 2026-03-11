@@ -8,9 +8,7 @@ const response = await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":`Bearer ${process.env.OPENROUTER_KEY}`,
-"HTTP-Referer":"https://review-generator-delta.vercel.app/",
-"X-Title":"Mist Cottage Review Generator"
+"Authorization":`Bearer ${process.env.OPENROUTER_KEY}`
 },
 body:JSON.stringify({
 model:"meta-llama/llama-3-8b-instruct",
