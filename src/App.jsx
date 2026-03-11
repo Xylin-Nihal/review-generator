@@ -6,6 +6,7 @@ const [rating,setRating] = useState(0)
 const [reviews,setReviews] = useState([])
 const [loading,setLoading] = useState(false)
 const [feedback,setFeedback] = useState("")
+const [copied,setCopied] = useState(false)
 
 const GOOGLE_REVIEW_LINK =
 "https://search.google.com/local/writereview?placeid=ChIJF42NmvBmBzsRuhPykAmZyEE"
@@ -22,22 +23,54 @@ const response = await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":"Bearer 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"
+"Authorization":"Bearer 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"
 },
 body:JSON.stringify({
 model:"meta-llama/llama-3-8b-instruct",
 messages:[
 {
 role:"user",
-content:"Generate 3 short positive Google review comments for a cottage stay in kodaikanalunder 15 words. Each on a new line. Do not say anything else other than the review comments."
+content:`
+Generate 3 unique and natural sounding positive Google review comments for a homestay called "Mist Cottage and Home Stay" located in Kodaikanal.
+
+Requirements:
+• Each review must contain between 15 and 30 words.
+• Each review must include 2 or 3 different keywords from the list below.
+• Rotate the keywords so each review uses a different combination.
+• Do not repeat the same keyword combination.
+• The keywords must appear naturally in the sentence.
+• Do not number the reviews.
+• Return each review on a new line.
+  do not include any additional text or formatting, only the review comments.
+
+Keywords:
+1. Kodaikanal home stay
+2. Best hotels in Kodaikanal
+3. Budget hotels in Kodaikanal
+4. Hotels in Kodaikanal
+5. Group stay in Kodaikanal
+6. Resorts in Kodaikanal
+7. Best cottages in Kodaikanal
+8. Cottage in Kodaikanal
+9. Best homestay in Kodaikanal
+10. Family stay in Kodaikanal
+
+Focus on positive experiences like peaceful atmosphere, clean rooms, friendly hosts, relaxing stay and beautiful surroundings.
+`
 }
 ],
-temperature:0.9
+temperature:1
 })
 }
 )
 
 const data = await response.json()
+
+console.log("API RESPONSE:", data)
+
+if(!data.choices){
+throw new Error("Invalid API response")
+}
 
 const text = data.choices[0].message.content
 
@@ -50,12 +83,12 @@ setReviews(list)
 
 }catch(err){
 
-console.log(err)
+console.error("Review generation failed:", err)
 
 setReviews([
-"Great hospitality and peaceful stay!",
-"Beautiful property with excellent service!",
-"Wonderful experience, highly recommended!"
+"Beautiful and peaceful Kodaikanal home stay with friendly hosts. One of the best cottages in Kodaikanal for a relaxing family stay in Kodaikanal.",
+"Very clean and comfortable rooms. This cottage in Kodaikanal stands out among the best homestay in Kodaikanal and budget hotels in Kodaikanal.",
+"Amazing hospitality and calm surroundings. Definitely one of the best hotels in Kodaikanal and perfect for a group stay in Kodaikanal."
 ])
 
 }
@@ -78,7 +111,11 @@ function copyReview(text){
 
 navigator.clipboard.writeText(text)
 
-alert("✅ Review copied! Paste it on Google Review.")
+setCopied(true)
+
+setTimeout(()=>{
+window.open(GOOGLE_REVIEW_LINK,"_blank")
+},1200)
 
 }
 
@@ -90,7 +127,7 @@ return (
 
 {/* BUSINESS HEADER */}
 
-<div className="flex items-center gap-4 mb-6">
+<div className="flex items-center gap-4 mb-4">
 
 <img
 src="/logo.jpeg"
@@ -104,7 +141,7 @@ MIST COTTAGE AND HOME STAY
 </h2>
 
 <p className="text-sm text-gray-500">
-Leave a review about your experience
+Tap ⭐⭐⭐⭐⭐ to leave a quick Google review
 </p>
 
 </div>
@@ -143,6 +180,12 @@ star<=rating ? "text-yellow-400":"text-gray-300"
 Choose a review suggestion
 </h3>
 
+{copied && (
+<div className="text-green-600 text-sm mb-3 text-center">
+✓ Review copied! Opening Google review...
+</div>
+)}
+
 {loading && (
 
 <div className="flex items-center gap-2 text-gray-500 mb-4">
@@ -170,21 +213,16 @@ onClick={()=>copyReview(review)}
 <p className="text-gray-800">{review}</p>
 
 <p className="text-xs text-blue-600 mt-1">
-Tap to copy
+Tap to copy & open Google review
 </p>
 
 </div>
 
 ))}
 
-<button
-onClick={()=>window.open(GOOGLE_REVIEW_LINK)}
-className="mt-4 w-full bg-blue-600 text-white py-3 rounded-full font-medium hover:bg-blue-700 transition"
->
-
-Write Review on Google
-
-</button>
+<p className="text-xs text-gray-400 mt-2 text-center">
+⭐ Takes less than 10 seconds
+</p>
 
 </div>
 
