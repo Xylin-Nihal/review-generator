@@ -3,15 +3,15 @@ export default async function handler(req, res) {
   try {
 
     const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENROUTER_KEY}`
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "meta-llama/llama-3-8b-instruct",
+          model: "openai/gpt-oss-120b",
           messages: [
             {
               role: "user",
@@ -46,11 +46,13 @@ Focus on positive experiences like peaceful atmosphere, clean rooms, friendly ho
       }
     );
 
+    const responseBody = await response.text();
+
     if (!response.ok) {
-      throw new Error(`OpenRouter error: ${response.status}`);
+      throw new Error(`Groq error: ${response.status} ${responseBody}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseBody);
 
     const text = data.choices[0].message.content.trim();
 
